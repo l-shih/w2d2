@@ -4,11 +4,13 @@
   <title>TinyApp</title>
 </head>
 <body>
+  <%- include('partials/_headers') %>
   <ul>
   <% for(url in urls) { %>
-    <li><%= `${url}: ${urls[url]}` %></li>
+    <li> <%= `${url}: ${urls[url]}` %> </li>
   <% } %>
   </ul>
+  <p> <%- `<a href="">Press here to shorten URL</a>` %> </p>
   <pre><%#= JSON.stringify(urls[url]) %></pre>
 </body>
 </html>

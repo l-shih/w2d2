@@ -23,6 +23,10 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', {urls: urlDatabase});
 });
 
+app.get("/urls/:id", (req, res) => {
+  res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase});
+});
+
 // app.get("/hello", (req, res) => {
 //   res.end("<html><body>Hello <b>World</b></body></html>\n");
 // });
