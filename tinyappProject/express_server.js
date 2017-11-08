@@ -51,7 +51,7 @@ app.post("/urls", (req, res) => {
 
 
 app.get("/u/:shortURL", (req, res) => {
-  let shortURL = req.params.shortURL;
+  const shortURL = req.params.shortURL;
   if (!urlDatabase[shortURL]) {
     res.sendStatus(404);
     return;
@@ -63,13 +63,26 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.get("/urls/:id", (req, res) => {
-  let iD = req.params.id
+  const iD = req.params.id
   if (!urlDatabase[iD]) {
     res.sendStatus(400);
     return
   }
 
   res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase});
+});
+
+
+app.post("/urls/:id/delete", (req, res) => {
+  const deleteURL = req.params.id
+  if (!urlDatabase[deleteURL]) {
+    res.sendStatus(400);
+    return
+  }
+
+  delete urlDatabase[deleteURL];
+  console.log(urlDatabase);
+  res.redirect("/urls");
 });
 
 
