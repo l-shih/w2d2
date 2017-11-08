@@ -1,16 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+  table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+  }
+
+  td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+  }
+  </style>
   <title>TinyApp</title>
 </head>
 <body>
   <% include partials/_headers %>
-  <ul>
-  <% for(url in urls) { %>
-    <li> <%= `${url}: ${urls[url]}` %> </li>
-  <% } %>
-  </ul>
+  <table style="width:75%">
+    <tr>
+      <th>Shortened URL</th>
+      <th>Destination Address</th>
+    </tr>
+    <tr>
+    <% for(url in urls) { %>
+    </tr>
+    <td><%= url %></td>
+    <td><%= urls[url] %></td>
+    <tr>
+    <% } %>
+    </tr>
+  </table>
+
   <p> <%- `<a href="">Press here to shorten URL</a>` %> </p>
-  <pre><%#= JSON.stringify(urls[url]) %></pre>
+
 </body>
 </html>

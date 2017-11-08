@@ -14,13 +14,17 @@ function generateRandomString() {
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
+// Defining a HTTP GET request on "/"
+// Along with a callback fn that will handle the response
 app.get("/", (req, res) => {
   res.end("Hello!");
 });
 
+
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
+
 
 app.get("/urls/new", (req, res) => {
   res.render('urls_new');
@@ -30,6 +34,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls", (req, res) => {
   res.render('urls_index', {urls: urlDatabase});
 });
+
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
@@ -41,21 +46,32 @@ app.post("/urls", (req, res) => {
 
   urlDatabase[shortURL] = longURL;
   res.redirect("/urls/" + shortURL);
+
 });
 
 
 app.get("/u/:shortURL", (req, res) => {
-  let shortie = req.params.shortURL;
-  if (urlDatabase[shortie]) {
-    res.redirect(urlDatabase[shortie]);
-  } else {
-    console.log("shortened url does not exist");
+  let shortURL = req.params.shortURL;
+  if (!urlDatabase[shortURL]) {
+    res.sendStatus(404);
+    return;
   }
+
+  res.redirect(urlDatabase[shortURL]);
+
 });
 
+
 app.get("/urls/:id", (req, res) => {
+  let iD = req.params.id
+  if (!urlDatabase[iD]) {
+    res.sendStatus(400);
+    return
+  }
+
   res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase});
 });
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

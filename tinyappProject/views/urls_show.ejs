@@ -4,8 +4,7 @@
   <title></title>
 </head>
 <body>
-  <%- include('partials/_headers') %>
-  <p><%= `This is the shortened link ${shortURL}. This will take you to ${urls[shortURL]}` %></p>
-
+  <% include partials/_headers %>
+  <p> Your shortened URL is <%= shortURL %>. This will take you to <a href="<%= urls[shortURL] %>"><%= urls[shortURL] %></a></p>
 </body>
 </html>
