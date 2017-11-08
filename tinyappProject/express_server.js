@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = process.env.PORT || 8080;
 const urlDatabase = {
@@ -12,6 +13,7 @@ function generateRandomString() {
 }
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 app.set("view engine", "ejs");
 
 // Defining a HTTP GET request on "/"
@@ -32,7 +34,7 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  res.render('urls_index', {urls: urlDatabase});
+  res.render('urls_index', {urls: urlDatabase, username: req.cookies["username"]});
 });
 
 
@@ -69,7 +71,7 @@ app.get("/urls/:id", (req, res) => {
     return
   }
 
-  res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase});
+  res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"]});
 });
 
 
@@ -92,6 +94,13 @@ app.post("/:id/update", (req, res) => {
   }
 
   urlDatabase[updateURL] = req.body.editedLongURL;
+  res.redirect("/urls");
+});
+
+
+app.post("/login", (req, res) => {
+  res.cookie("username", req.body.username);
+  console.log(req.cookies["username"]);
   res.redirect("/urls");
 });
 
