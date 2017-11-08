@@ -17,23 +17,31 @@
   <title>TinyApp</title>
 </head>
 <body>
+
   <% include partials/_headers %>
+
   <table style="width:75%">
     <tr>
       <th>Shortened URL</th>
       <th>Destination Address</th>
+      <th>Remove Link</th>
     </tr>
     <tr>
     <% for(url in urls) { %>
     </tr>
     <td><%= url %></td>
     <td><%= urls[url] %></td>
+    <td>
+      <form method="POST" action="/urls/9sm5xK/delete">
+        <input type="submit" value="Delete me">
+      </form>
+    </td>
     <tr>
     <% } %>
     </tr>
   </table>
 
-  <p> <%- `<a href="">Press here to shorten URL</a>` %> </p>
+  <p><a href="">Press here to shorten URL</a></p>
 
 </body>
 </html>
