@@ -1,9 +1,22 @@
 <header><h1>HEADER TITLE</h1></header>
 
-<p>Hello <b><%=username%></b>.</p>
 
+
+
+
+
+
+<%if (!username) {%>
 <form action="/login" method="POST" style="margin:10px;">
   <label for="username">Enter Username: </label>
   <input id="username" type="text" name="username" placeholder="" style="width:150px">
-  <input type="submit" value="Submit">
+  <input type="submit" value="login">
 </form>
+<%} else {%>
+<form action="/logout " method="POST" style="margin:10px;">
+  <label for="username">Hello <b><%=username%></b>.</label>
+  <input type="submit" value="logout">
+</form>
+<%} %>
+
+
