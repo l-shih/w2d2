@@ -68,7 +68,7 @@ app.get("/urls/:id", (req, res) => {
   const iD = req.params.id
   if (!urlDatabase[iD]) {
     res.sendStatus(400);
-    return
+    return;
   }
 
   res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"]});
@@ -79,7 +79,7 @@ app.post("/urls/:id/delete", (req, res) => {
   const deleteURL = req.params.id
   if (!urlDatabase[deleteURL]) {
     res.sendStatus(400);
-    return
+    return;
   }
 
   delete urlDatabase[deleteURL];
@@ -90,7 +90,7 @@ app.post("/:id/update", (req, res) => {
   const updateURL = req.params.id
   if (!urlDatabase[updateURL]) {
     res.sendStatus(404);
-    return
+    return;
   }
 
   urlDatabase[updateURL] = req.body.editedLongURL;
@@ -100,9 +100,14 @@ app.post("/:id/update", (req, res) => {
 
 app.post("/login", (req, res) => {
   res.cookie("username", req.body.username);
-  console.log(req.cookies["username"]);
   res.redirect("/urls");
 });
+
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
+})
 
 
 app.listen(PORT, () => {
