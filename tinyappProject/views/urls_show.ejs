@@ -5,6 +5,11 @@
 </head>
 <body>
   <% include partials/_headers %>
-  <p> Your shortened URL is <%= shortURL %>. This will take you to <a href="<%= urls[shortURL] %>"><%= urls[shortURL] %></a></p>
+  <p>ShortURL: <%=shortURL%></p>
+  <form action="/<%= shortURL %>/update" method="POST" style="margin:50px;">
+    <label for="editedLongURL">Update your URL:</label>
+    <input id="editedLongURL" type="text" name="editedLongURL" placeholder="<%=urls[shortURL]%>" style="width:300px">
+    <input type="submit" value="Update">
+  </form>
 </body>
 </html>

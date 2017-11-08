@@ -24,6 +24,7 @@
     <tr>
       <th>Shortened URL</th>
       <th>Destination Address</th>
+      <th>Change Address</th>
       <th>Remove Link</th>
     </tr>
     <tr>
@@ -31,8 +32,9 @@
     </tr>
     <td><%= url %></td>
     <td><%= urls[url] %></td>
+    <td><a href="/urls/<%= url %>">Edit me</a></td>
     <td>
-      <form method="POST" action="/urls/9sm5xK/delete">
+      <form method="POST" action="/urls/<%= url %>/delete">
         <input type="submit" value="Delete me">
       </form>
     </td>
@@ -41,7 +43,7 @@
     </tr>
   </table>
 
-  <p><a href="">Press here to shorten URL</a></p>
+  <p><a href="/urls/new">Press here to shorten URL</a></p>
 
 </body>
 </html>
