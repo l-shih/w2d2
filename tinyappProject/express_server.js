@@ -3,10 +3,19 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    id:  "user1",
+    url: "http://www.lighthouselabs.ca"
+  },
+  "9sm5xK": {
+    id:  "user1",
+    url: "http://www.google.com"
+  }
 };
+
 
 const users = {
   "user1" : {
@@ -16,13 +25,18 @@ const users = {
   },
 };
 
+
 function urlRandomString() {
   return Math.random().toString(36).substr(2, 6);
+
 }
+
 
 function userRandomString() {
   return Math.random().toString(36).substr(2, 4);
+
 }
+
 
 function findUsername(email) {
   return Object.keys(users)
@@ -36,8 +50,10 @@ function validateUser(email, password) {
   .find((key) => users[key]["email"] == email && users[key]["password"] == password);
 }
 
+
 // CONFIGURATION (should be located before middlewares)
 app.set("view engine", "ejs");
+
 
 // MIDDLEWARES
 app.use(bodyParser.urlencoded({extended: true}));
@@ -57,7 +73,12 @@ app.get("/urls.json", (req, res) => {
 
 
 app.get("/urls/new", (req, res) => {
-  res.render('urls_new');
+  if (!req.cookies["user_id"]) {
+    res.render("urls_login");
+  }
+
+  res.render('urls_new', {urls: urlDatabase, user_id: req.cookies["user_id"], users: users[req.cookies["user_id"]]});
+
 });
 
 
@@ -70,17 +91,23 @@ app.get("/urls", (req, res) => {
 app.post("/urls", (req, res) => {
   const shortURL = urlRandomString();
   const longURL = req.body.longURL;
+  const user_id = req.cookies["user_id"];
   if (!longURL) {
     res.sendStatus(400);
     return;
   }
-
-  urlDatabase[shortURL] = longURL;
+  // this adds the newly created shortURL to the urlDatabase
+  urlDatabase[shortURL] = {
+    id:  user_id,
+    url: longURL
+  };
+  // once created, will be directed to edit page of the URL
   res.redirect("/urls/" + shortURL);
 
 });
 
 
+// redirects to the actual webpage of the shortened URL, if it exists
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   if (!urlDatabase[shortURL]) {
@@ -88,14 +115,18 @@ app.get("/u/:shortURL", (req, res) => {
     return;
   }
 
-  res.redirect(urlDatabase[shortURL]);
+  res.redirect(urlDatabase[shortURL]["url"]);
 
 });
 
 
+// the edit page of the URL
 app.get("/urls/:id", (req, res) => {
-  const iD = req.params.id
-  if (!urlDatabase[iD]) {
+  const user = req.cookies["user_id"];
+  const shortURL = req.params.id;
+  console.log(user);
+  console.log(urlDatabase[shortURL]["id"])
+  if (!urlDatabase[shortURL] || user !== urlDatabase[shortURL]["id"]) {
     res.sendStatus(400);
     return;
   }
