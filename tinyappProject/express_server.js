@@ -12,7 +12,7 @@ const users = {
   "user1" : {
     id:       "user1",
     email:    "hello@nononon.com",
-    password: "supBroski"
+    password: "1234"
   },
 };
 
@@ -24,15 +24,16 @@ function userRandomString() {
   return Math.random().toString(36).substr(2, 4);
 }
 
-function findUser(email) {
+function findUsername(email) {
   return Object.keys(users)
   .filter((key) => {return users[key]["email"] === email}).length > 0;
 
-  //console.log(filtered);
-    //return Object.keys(users).filter((key) => {
-    //return console.log(users[key]["email"] === true) }).length > 0;
+}
 
 
+function validateUser(email, password) {
+  return Object.keys(users)
+  .find((key) => users[key]["email"] == email && users[key]["password"] == password);
 }
 
 // CONFIGURATION (should be located before middlewares)
@@ -128,9 +129,22 @@ app.post("/:id/update", (req, res) => {
 });
 
 
+app.get("/toLogin", (req, res) => {
+  res.render("urls_login");
+
+});
+
+
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  const {email, password} = req.body
+  if (!validateUser(email, password)) {
+    res.sendStatus(403);
+  } else {
+    console.log("you good brah");
+  }
+
+  // res.cookie("user_", req.body.username);
+  // res.redirect("/urls");
 
 });
 
@@ -150,7 +164,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const {email, password} = req.body;
-  const foundUser = findUser(email);
+  const foundUser = findUsername(email);
 
   if (email.length === 0 || password.length === 0 || foundUser === true) {
     res.sendStatus(400);
@@ -167,7 +181,7 @@ app.post("/register", (req, res) => {
     res.redirect("/urls");
   };
 
-  console.log(users);
+  //console.log(users);
 
 
 });
