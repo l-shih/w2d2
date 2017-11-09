@@ -62,10 +62,8 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  if(req.cookies["user_id"] === 'user1'){
-    console.log('I am logged in');
-  }
-  res.render('urls_index', {urls: urlDatabase, username: req.cookies["username"], user_id: req.cookies["user_id"], users: users[req.cookies["user_id"]]});
+  res.render('urls_index', {urls: urlDatabase, user_id: req.cookies["user_id"], users: users[req.cookies["user_id"]]});
+
 });
 
 
@@ -143,7 +141,6 @@ app.post("/login", (req, res) => {
   if (!validateUser(email, password)) {
     res.sendStatus(403);
   } else {
-    console.log('i am before ' + validateUser(email, password));
     res.cookie("user_id", validateUser(email, password));
     res.redirect("/");
   }
@@ -152,7 +149,7 @@ app.post("/login", (req, res) => {
 
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 
 })
