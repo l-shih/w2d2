@@ -8,13 +8,29 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-function generateRandomString() {
+const users = {
+  "user1" : {
+    id:       "user1",
+    email:    "hello@nononon.com",
+    password: "supBroski"
+  },
+};
+
+function urlRandomString() {
   return Math.random().toString(36).substr(2, 6);
 }
 
+function userRandomString() {
+  return Math.random().toString(36).substr(2, 4);
+}
+
+// CONFIGURATION (should be before middlewares)
+app.set("view engine", "ejs");
+
+// MIDDLEWARES
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-app.set("view engine", "ejs");
+
 
 // Defining a HTTP GET request on "/"
 // Along with a callback fn that will handle the response
@@ -39,7 +55,7 @@ app.get("/urls", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
+  const shortURL = urlRandomString();
   const longURL = req.body.longURL;
   if (!longURL) {
     res.sendStatus(400);
@@ -109,8 +125,24 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 })
 
+
 app.get("/register", (req, res) => {
   res.render("urls_register");
+});
+
+
+app.post("/register", (req, res) => {
+  const userID = userRandomString();
+  users[userID] = {
+    id:       userID,
+    email:    req.body.email,
+    password: req.body.password
+  }
+
+  console.log(users);
+
+  res.cookie("user_id", userID);
+  res.redirect("/urls");
 });
 
 
