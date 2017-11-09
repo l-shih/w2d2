@@ -126,6 +126,8 @@ app.get("/urls/:id", (req, res) => {
   const shortURL = req.params.id;
   console.log(user);
   console.log(urlDatabase[shortURL]["id"])
+
+  // will error if shortURL doesn't exist OR the person accessing it is not the owner
   if (!urlDatabase[shortURL] || user !== urlDatabase[shortURL]["id"]) {
     res.sendStatus(400);
     return;
@@ -137,8 +139,11 @@ app.get("/urls/:id", (req, res) => {
 
 
 app.post("/urls/:id/delete", (req, res) => {
+  const user = req.cookies["user_id"];
   const deleteURL = req.params.id
-  if (!urlDatabase[deleteURL]) {
+
+  // will error if deleteURL doesn't exist OR the person accessing it is not the owner
+  if (!urlDatabase[deleteURL] || user !== urlDatabase[deleteURL]["id"]) {
     res.sendStatus(400);
     return;
   }

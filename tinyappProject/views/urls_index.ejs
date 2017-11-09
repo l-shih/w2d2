@@ -30,7 +30,7 @@
     <% for(url in urls) { %>
     </tr>
     <td><%= url %></td>
-    <td><%= urls[url] %></td>
+    <td><%= urls[url]["url"] %></td>
     <td><a href="/urls/<%= url %>">Edit me</a></td>
     <td>
       <form method="POST" action="/urls/<%= url %>/delete">
