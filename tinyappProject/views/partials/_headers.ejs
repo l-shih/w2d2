@@ -1,20 +1,17 @@
-<header><h1>HEADER TITLE</h1></header>
+<header><h1>HEADER TITLE! </h1></header>
 
 
 
-<!-- <p>testing cookie <%= user_id %></p>
-<p>cookie's email <%= users.email %></p> -->
-
-
-<%if (!username) {%>
-<form action="/login" method="POST" style="margin:10px;">
-  <label for="username">Enter Username: </label>
-  <input id="username" type="text" name="username" placeholder="" style="width:150px">
-  <input type="submit" value="login">
+<%if (!user_id) {%>
+<form action="/toLogin" method="GET" style="margin:10px;">
+  <input type="submit" value="Login">
+</form>
+<form action="/register" method="GET" style="margin:10px;">
+  <input type="submit" value="Register">
 </form>
 <%} else {%>
-<form action="/logout " method="POST" style="margin:10px;">
-  <label for="username">Hello <b><%=userID%></b>.</label>
+<form action="/logout" method="POST" style="margin:10px;">
+  <label for="username">Hello <%=users["email"]%></label>
   <input type="submit" value="logout">
 </form>
 <%} %>
