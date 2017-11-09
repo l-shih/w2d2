@@ -5,6 +5,7 @@
 </head>
 <body>
   <% include partials/_headers %>
+  <p><%=users%></p>
   <p>ShortURL: <%=shortURL%></p>
   <form action="/<%= shortURL %>/update" method="POST" style="margin:10px;">
     <label for="editedLongURL">Update your URL:</label>
