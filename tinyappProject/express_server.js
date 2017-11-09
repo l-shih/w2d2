@@ -140,7 +140,9 @@ app.post("/login", (req, res) => {
   if (!validateUser(email, password)) {
     res.sendStatus(403);
   } else {
-    console.log("you good brah");
+    //console.log(validateUser(email, password) + " is the userID");
+    req.cookies["user_id"] = validateUser(email, password);
+    console.log(req.cookies);
   }
 
   // res.cookie("user_", req.body.username);
