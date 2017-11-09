@@ -25,21 +25,17 @@ function userRandomString() {
 }
 
 function findUser(email) {
-  return Object.keys(users).filter((key) => {
-    return users[key]["email"] === true }).length > 0;
+  return Object.keys(users)
+  .filter((key) => {return users[key]["email"] === email}).length > 0;
 
-  // for (let key in users) {   THIS WORKS TOO BUT IS NOT EFFICIENT
-  //   if (users[key]["email"] === email) {
-  //     console.log("found");
-  //     return "found";
-  //   }
-  // }
-  // return false;
-  // console.log("i am in your functions " + email);
-  // return email;
+  //console.log(filtered);
+    //return Object.keys(users).filter((key) => {
+    //return console.log(users[key]["email"] === true) }).length > 0;
+
+
 }
 
-// CONFIGURATION (should be before middlewares)
+// CONFIGURATION (should be located before middlewares)
 app.set("view engine", "ejs");
 
 // MIDDLEWARES
@@ -65,7 +61,7 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  res.render('urls_index', {urls: urlDatabase, username: req.cookies["username"]});
+  res.render('urls_index', {urls: urlDatabase, username: req.cookies["username"], user_id: req.cookies["user_id"], users: users[req.cookies["user_id"]]});
 });
 
 
@@ -102,7 +98,7 @@ app.get("/urls/:id", (req, res) => {
     return;
   }
 
-  res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"]});
+  res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase, user_id: req.cookies["user_id"], users: users[req.cookies["user_id"]]});
 
 });
 
@@ -153,29 +149,25 @@ app.get("/register", (req, res) => {
 
 
 app.post("/register", (req, res) => {
-  const email = req.body.email;
-  const pwrd = req.body.password;
-
+  const {email, password} = req.body;
   const foundUser = findUser(email);
 
-  console.log("i am in your post " + foundUser);
+  if (email.length === 0 || password.length === 0 || foundUser === true) {
+    res.sendStatus(400);
+    return;
+  } else {
+    const userID = userRandomString();
+    users[userID] = {
+      id:       userID,
+      email:    email,
+      password: password
+    };
 
-  // if (email.length === 0 || pwrd.length === 0 || foundUser === true) {
-  //   res.sendStatus(400);
-  //   return;
-  // } else {
-  //   const userID = userRandomString();
-  //   users[userID] = {
-  //     id:       userID,
-  //     email:    email,
-  //     password: pwrd
-  //   };
+    res.cookie("user_id", userID);
+    res.redirect("/urls");
+  };
 
-  //   res.cookie("user_id", userID);
-  //   res.redirect("/urls");
-  // };
-
-  //console.log(users);
+  console.log(users);
 
 
 });

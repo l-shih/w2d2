@@ -2,8 +2,8 @@
 
 
 
-
-
+<!-- <p>testing cookie <%= user_id %></p>
+<p>cookie's email <%= users.email %></p> -->
 
 
 <%if (!username) {%>
@@ -14,7 +14,7 @@
 </form>
 <%} else {%>
 <form action="/logout " method="POST" style="margin:10px;">
-  <label for="username">Hello <b><%=username%></b>.</label>
+  <label for="username">Hello <b><%=userID%></b>.</label>
   <input type="submit" value="logout">
 </form>
 <%} %>
