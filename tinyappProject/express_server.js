@@ -24,6 +24,21 @@ function userRandomString() {
   return Math.random().toString(36).substr(2, 4);
 }
 
+function findUser(email) {
+  return Object.keys(users).filter((key) => {
+    return users[key]["email"] === true }).length > 0;
+
+  // for (let key in users) {   THIS WORKS TOO BUT IS NOT EFFICIENT
+  //   if (users[key]["email"] === email) {
+  //     console.log("found");
+  //     return "found";
+  //   }
+  // }
+  // return false;
+  // console.log("i am in your functions " + email);
+  // return email;
+}
+
 // CONFIGURATION (should be before middlewares)
 app.set("view engine", "ejs");
 
@@ -88,6 +103,7 @@ app.get("/urls/:id", (req, res) => {
   }
 
   res.render("urls_show", {shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"]});
+
 });
 
 
@@ -100,6 +116,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
   delete urlDatabase[deleteURL];
   res.redirect("/urls");
+
 });
 
 app.post("/:id/update", (req, res) => {
@@ -111,38 +128,56 @@ app.post("/:id/update", (req, res) => {
 
   urlDatabase[updateURL] = req.body.editedLongURL;
   res.redirect("/urls");
+
 });
 
 
 app.post("/login", (req, res) => {
   res.cookie("username", req.body.username);
   res.redirect("/urls");
+
 });
 
 
 app.post("/logout", (req, res) => {
   res.clearCookie("username");
   res.redirect("/urls");
+
 })
 
 
 app.get("/register", (req, res) => {
   res.render("urls_register");
+
 });
 
 
 app.post("/register", (req, res) => {
-  const userID = userRandomString();
-  users[userID] = {
-    id:       userID,
-    email:    req.body.email,
-    password: req.body.password
-  }
+  const email = req.body.email;
+  const pwrd = req.body.password;
 
-  console.log(users);
+  const foundUser = findUser(email);
 
-  res.cookie("user_id", userID);
-  res.redirect("/urls");
+  console.log("i am in your post " + foundUser);
+
+  // if (email.length === 0 || pwrd.length === 0 || foundUser === true) {
+  //   res.sendStatus(400);
+  //   return;
+  // } else {
+  //   const userID = userRandomString();
+  //   users[userID] = {
+  //     id:       userID,
+  //     email:    email,
+  //     password: pwrd
+  //   };
+
+  //   res.cookie("user_id", userID);
+  //   res.redirect("/urls");
+  // };
+
+  //console.log(users);
+
+
 });
 
 
