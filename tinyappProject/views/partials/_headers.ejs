@@ -1,4 +1,4 @@
-<header><h1>HEADER TITLE! </h1></header>
+<header><h1>TinyApp</h1></header>
 
 
 
@@ -11,7 +11,7 @@
 </form>
 <%} else {%>
 <form action="/logout" method="POST" style="margin:10px;">
-  <label for="username">Hello <%=users["email"]%></label>
+  <label for="username">Hello, <%=users["email"]%></label>
   <input type="submit" value="logout">
 </form>
 <%} %>

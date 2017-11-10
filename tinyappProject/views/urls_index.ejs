@@ -34,7 +34,7 @@
       <tr>
         <td><%= urls[i].shortURL%></td>
         <td><%= urls[i].url%></td>
-        <td><a href="/u/<%= urls[i].shortURL %>">Edit me</a></td>
+        <td><a href="/urls/<%= urls[i].shortURL %>">Edit me</a></td>
         <td>
         <form method="POST" action="/urls/<%= urls[i].shortURL %>/delete">
         <input type="submit" value="Delete me">
