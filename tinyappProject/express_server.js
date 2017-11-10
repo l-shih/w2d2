@@ -163,8 +163,7 @@ app.post("/urls/:id/delete", (req, res) => {
   const user = req.session.user_id;
   const deleteURL = req.params.id
 
-  // will error if deleteURL doesn't exist OR the person accessing it is not the owner
-  if (!urlDatabase[deleteURL] || user !== urlDatabase[deleteURL]["id"]) {
+  if (!urlDatabase[deleteURL]["url"] || user !== urlDatabase[deleteURL]["user_id"]) {
     res.sendStatus(400);
     return;
   }
@@ -176,15 +175,13 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/:id/update", (req, res) => {
   const updateShortURL = req.params.id
-  console.log(updateShortURL);
   if (!urlDatabase[updateShortURL]) {
     res.sendStatus(404);
     return;
   }
-  console.log(req.body.editedLongURL);
+
   urlDatabase[updateShortURL]["url"] = req.body.editedLongURL;
 
-  console.log(urlDatabase);
   res.redirect("/urls");
 
 });
