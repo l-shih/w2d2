@@ -26,7 +26,7 @@ const users = {
   "user1" : {
     id:       "user1",
     email:    "hello@nononon.com",
-    password: "1234"
+    password: bcrypt.hashSync("1234", 10)
   },
 };
 
@@ -86,7 +86,8 @@ app.use(cookieSession({
 // Defining a HTTP GET request on "/"
 // Along with a callback fn that will handle the response
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  var result = urlsForUser(req.session.user_id);
+  res.render('urls_index', {urls: result, user_id: req.session.user_id, users: users[req.session.user_id]});
 });
 
 
