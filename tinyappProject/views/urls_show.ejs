@@ -8,7 +8,7 @@
   <p>ShortURL: <%=shortURL%></p>
   <form action="/<%= shortURL %>/update" method="POST" style="margin:10px;">
     <label for="editedLongURL">Update your URL:</label>
-    <input id="editedLongURL" type="text" name="editedLongURL" placeholder="<%=urls[shortURL]%>" style="width:300px">
+    <input id="editedLongURL" type="text" name="editedLongURL" placeholder="<%=urls[shortURL]["url"]%>" style="width:300px">
     <input type="submit" value="Update">
   </form>
   <p>Created by: <%=users["email"]%></p>

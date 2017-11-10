@@ -7,12 +7,14 @@ const PORT = process.env.PORT || 8080;
 
 const urlDatabase = {
   "b2xVn2": {
-    id:  "user1",
-    url: "http://www.lighthouselabs.ca"
+    user_id:  "user1",
+    url: "http://www.lighthouselabs.ca",
+    shortURL: "b2xVn2"
   },
   "9sm5xK": {
-    id:  "user1",
-    url: "http://www.google.com"
+    user_id:  "user1",
+    url: "http://www.google.com",
+    shortURL: "9sm5xK"
   }
 };
 
@@ -51,6 +53,21 @@ function validateUser(email, password) {
 }
 
 
+function urlsForUser(user_id) {
+
+  var userSpecificData = [];
+
+  for(var t in urlDatabase){
+    if(urlDatabase[t].user_id===user_id){
+      userSpecificData.push(urlDatabase[t]);
+    }
+  }
+  // console.log(" In in the function ");
+  // console.log(userSpecificData);
+  return userSpecificData;
+}
+
+
 // CONFIGURATION (should be located before middlewares)
 app.set("view engine", "ejs");
 
@@ -83,12 +100,18 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  res.render('urls_index', {urls: urlDatabase, user_id: req.cookies["user_id"], users: users[req.cookies["user_id"]]});
+  console.log(urlDatabase);
+  //call the function
+  var result = urlsForUser(req.cookies["user_id"]);
 
+
+  res.render('urls_index', {urls: result, user_id: req.cookies["user_id"], users: users[req.cookies["user_id"]]});
+  //console.log("i am that function you created, should be the users id: " + urlsForUser(req.cookies["user_id"]));
 });
 
 
 app.post("/urls", (req, res) => {
+
   const shortURL = urlRandomString();
   const longURL = req.body.longURL;
   const user_id = req.cookies["user_id"];
@@ -98,11 +121,13 @@ app.post("/urls", (req, res) => {
   }
   // this adds the newly created shortURL to the urlDatabase
   urlDatabase[shortURL] = {
-    id:  user_id,
-    url: longURL
+    user_id:  user_id,
+    url:      longURL,
+    shortURL: shortURL
   };
   // once created, will be directed to edit page of the URL
   res.redirect("/urls/" + shortURL);
+
 
 });
 
@@ -124,8 +149,8 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const user = req.cookies["user_id"];
   const shortURL = req.params.id;
-  console.log(user);
-  console.log(urlDatabase[shortURL]["id"])
+  //console.log(user);
+  //console.log(urlDatabase[shortURL]["id"])
 
   // will error if shortURL doesn't exist OR the person accessing it is not the owner
   if (!urlDatabase[shortURL] || user !== urlDatabase[shortURL]["id"]) {

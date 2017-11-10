@@ -19,6 +19,9 @@
 
   <% include partials/_headers %>
 
+  <% if (!user_id) {%>
+  <p>You need to login, or register, to see URLs.</p>
+  <% } else {%>
   <table style="width:75%">
     <tr>
       <th>Shortened URL</th>
@@ -26,23 +29,23 @@
       <th>Change Address</th>
       <th>Remove Link</th>
     </tr>
-    <tr>
-    <% for(url in urls) { %>
-    </tr>
-    <td><%= url %></td>
-    <td><%= urls[url]["url"] %></td>
-    <td><a href="/urls/<%= url %>">Edit me</a></td>
-    <td>
-      <form method="POST" action="/urls/<%= url %>/delete">
+
+      <% for (var i = 0; i < urls.length;  i++) { %>
+      <tr>
+        <td><%= urls[i].shortURL%></td>
+        <td><%= urls[i].url%></td>
+        <td><a href="/u/<%= urls[i].shortURL %>">Edit me</a></td>
+        <td>
+        <form method="POST" action="/urls/<%= urls[i].shortURL %>/delete">
         <input type="submit" value="Delete me">
-      </form>
-    </td>
-    <tr>
-    <% } %>
-    </tr>
+        </form>
+        </td>
+      </tr>
+      <% } %>
+
   </table>
 
   <p><a href="/urls/new">Press here to shorten URL</a></p>
-
+  <% }%>
 </body>
 </html>
