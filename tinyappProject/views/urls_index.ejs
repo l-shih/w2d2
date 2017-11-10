@@ -24,7 +24,7 @@
   <% } else {%>
   <table style="width:75%">
     <tr>
-      <th>Shortened URL</th>
+      <th>Short URL</th>
       <th>Destination Address</th>
       <th>Change Address</th>
       <th>Remove Link</th>
@@ -32,7 +32,7 @@
 
       <% for (var i = 0; i < urls.length;  i++) { %>
       <tr>
-        <td><%= urls[i].shortURL%></td>
+        <td><a href="/u/<%= urls[i].shortURL%>"><%= urls[i].shortURL%></a></td>
         <td><%= urls[i].url%></td>
         <td><a href="/urls/<%= urls[i].shortURL %>">Edit me</a></td>
         <td>

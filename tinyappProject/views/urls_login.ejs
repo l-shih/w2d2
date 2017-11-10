@@ -5,13 +5,16 @@
   <title>Login Page</title>
 </head>
 <body>
-  <p>LOG IN HERE</p>
+  <p>LOG IN:</p>
   <form action="/login" method="POST" style="margin:10px;">
     <!-- <label for="userInfo">Please enter your login details below</label> -->
     <input id="email" type="email" name="email" placeholder="Enter email here" style="width:300px" display:"block">
     <input id="password" type="password" name="password" placeholder="Enter password here" style="width:300px">
     <input type="submit" value="Login">
   </form>
+  <form action="/register" method="GET" style="margin:10px;">
+  <input type="submit" value="or press here to register">
+</form>
 
 </body>
 </html>
