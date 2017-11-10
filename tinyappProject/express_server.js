@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 //const cookieParser = require('cookie-parser');
-var cookieSession = require('cookie-session')
+var cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const app = express();
 
@@ -28,6 +28,22 @@ const users = {
     email:    "hello@nononon.com",
     password: bcrypt.hashSync("1234", 10)
   },
+};
+
+
+const statusLookup = {
+  400 : {
+    txt:  "Bad Request",
+    img:  "https://httpstatusdogs.com/img/400.jpg",
+  },
+  404 : {
+    txt:  "Not Found",
+    img:  "https://httpstatusdogs.com/img/404.jpg",
+  },
+  403 : {
+    txt:  "Forbidden",
+    img:  "https://httpstatusdogs.com/img/403.jpg",
+  }
 };
 
 
@@ -86,8 +102,13 @@ app.use(cookieSession({
 // Defining a HTTP GET request on "/"
 // Along with a callback fn that will handle the response
 app.get("/", (req, res) => {
+  if (!req.session.user_id) {
+    res.render("urls_login");
+  }
+
   var result = urlsForUser(req.session.user_id);
   res.render('urls_index', {urls: result, user_id: req.session.user_id, users: users[req.session.user_id]});
+
 });
 
 
@@ -119,7 +140,8 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   const user_id = req.session.user_id;
   if (!longURL) {
-    res.sendStatus(400);
+    res.status(400);
+    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
     return;
   } else {
     urlDatabase[shortURL] = {
@@ -136,7 +158,8 @@ app.post("/urls", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   if (!urlDatabase[shortURL]) {
-    res.sendStatus(404);
+    res.status(404);
+    res.render("urls_error", {statNum: 404, status: statusLookup, statInfo: statusLookup[404]});
     return;
   }
 
@@ -151,7 +174,8 @@ app.get("/urls/:id", (req, res) => {
   const shortURL = req.params.id;
 
   if (!urlDatabase[shortURL]["shortURL"] || user !== urlDatabase[shortURL]["user_id"]) {
-    res.sendStatus(400);
+    res.status(400);
+    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
     return;
   }
 
@@ -165,7 +189,8 @@ app.post("/urls/:id/delete", (req, res) => {
   const deleteURL = req.params.id
 
   if (!urlDatabase[deleteURL]["url"] || user !== urlDatabase[deleteURL]["user_id"]) {
-    res.sendStatus(400);
+    res.status(400);
+    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
     return;
   }
 
@@ -177,7 +202,8 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/:id/update", (req, res) => {
   const updateShortURL = req.params.id
   if (!urlDatabase[updateShortURL]) {
-    res.sendStatus(404);
+    res.status(404);
+    res.render("urls_error", {statNum: 404, status: statusLookup, statInfo: statusLookup[404]});
     return;
   }
 
@@ -188,7 +214,7 @@ app.post("/:id/update", (req, res) => {
 });
 
 
-app.get("/toLogin", (req, res) => {
+app.get("/login", (req, res) => {
   res.render("urls_login");
 
 });
@@ -197,7 +223,8 @@ app.get("/toLogin", (req, res) => {
 app.post("/login", (req, res) => {
   const {email, password} = req.body
   if (!validateUser(email, password)) {
-    res.sendStatus(403);
+    res.status(403);
+    res.render("urls_error", {statNum: 403, status: statusLookup, statInfo: statusLookup[403]});
   } else {
     req.session.user_id = validateUser(email, password);
     res.redirect("/");
@@ -214,7 +241,12 @@ app.post("/logout", (req, res) => {
 
 
 app.get("/register", (req, res) => {
-  res.render("urls_register");
+  if (!req.session.user_id) {
+    res.render("urls_register");
+    return;
+  }
+
+  res.redirect("/urls");
 
 });
 
@@ -224,8 +256,9 @@ app.post("/register", (req, res) => {
   const foundUser = findUsername(email);
 
   if (email.length === 0 || password.length === 0 || foundUser === true) {
-    res.sendStatus(400);
-    return;
+    res.status(400);
+    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
+
   } else {
     const userID = userRandomString();
     users[userID] = {
