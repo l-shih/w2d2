@@ -91,7 +91,6 @@ app.set("trust proxy", 1);
 
 // MIDDLEWARES
 app.use(bodyParser.urlencoded({extended: true}));
-//app.use(cookieParser());
 app.use(cookieSession({
   name: "session",
   keys: ["key1", "key2"]
@@ -111,6 +110,7 @@ app.get("/", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
+
 });
 
 
@@ -132,10 +132,10 @@ app.get("/urls", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-
   const shortURL = urlRandomString();
   const longURL = req.body.longURL;
   const user_id = req.session.user_id;
+
   if (!longURL) {
     res.status(400);
     res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
@@ -146,14 +146,17 @@ app.post("/urls", (req, res) => {
       url:      longURL,
       shortURL: shortURL
     };
+
     res.redirect("/urls/" + shortURL);
   }
+
 });
 
 
 // redirects to the actual webpage of the shortened URL, if it exists
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
+
   if (!urlDatabase[shortURL]) {
     res.status(404);
     res.render("urls_error", {statNum: 404, status: statusLookup, statInfo: statusLookup[404]});
@@ -169,6 +172,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const user = req.session.user_id;
   const shortURL = req.params.id;
+
   if (!urlDatabase[shortURL]["shortURL"] || user !== urlDatabase[shortURL]["user_id"]) {
     res.status(400);
     res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
@@ -182,6 +186,7 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/:id/update", (req, res) => {
   const updateShortURL = req.params.id;
+
   if (!urlDatabase[updateShortURL]) {
     res.status(404);
     res.render("urls_error", {statNum: 404, status: statusLookup, statInfo: statusLookup[404]});
