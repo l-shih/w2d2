@@ -152,8 +152,11 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const user = req.cookies["user_id"];
   const shortURL = req.params.id;
+  // ok console.log(shortURL);
+  // ok console.log(urlDatabase[shortURL]["shortURL"]);
+  console.log(urlDatabase[shortURL]["user_id"]);
 
-  if (!urlDatabase[shortURL] || user !== urlDatabase[shortURL]["id"]) {
+  if (!urlDatabase[shortURL]["shortURL"] || user !== urlDatabase[shortURL]["user_id"]) {
     res.sendStatus(400);
     return;
   }
