@@ -1,7 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const app = express();
+
 const PORT = process.env.PORT || 8080;
 
 
@@ -28,6 +30,9 @@ const users = {
 };
 
 
+//const hashedPassword = bcrypt.hashSync(password, 10);
+
+
 function urlRandomString() {
   return Math.random().toString(36).substr(2, 6);
 
@@ -49,7 +54,7 @@ function findUsername(email) {
 
 function validateUser(email, password) {
   return Object.keys(users)
-  .find((key) => users[key]["email"] == email && users[key]["password"] == password);
+  .find((key) => users[key]["email"] == email && bcrypt.compareSync(password, users[key]["password"]));
 }
 
 
@@ -100,7 +105,8 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  console.log(urlDatabase);
+  //console.log(urlDatabase);
+  console.log(users);
   //call the function
   var result = urlsForUser(req.cookies["user_id"]);
 
@@ -118,17 +124,14 @@ app.post("/urls", (req, res) => {
   if (!longURL) {
     res.sendStatus(400);
     return;
-  }
-  // this adds the newly created shortURL to the urlDatabase
-  urlDatabase[shortURL] = {
-    user_id:  user_id,
-    url:      longURL,
-    shortURL: shortURL
+  } else {
+    urlDatabase[shortURL] = {
+      user_id:  user_id,
+      url:      longURL,
+      shortURL: shortURL
+    };
+    res.redirect("/urls/" + shortURL);
   };
-  // once created, will be directed to edit page of the URL
-  res.redirect("/urls/" + shortURL);
-
-
 });
 
 
@@ -149,10 +152,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const user = req.cookies["user_id"];
   const shortURL = req.params.id;
-  //console.log(user);
-  //console.log(urlDatabase[shortURL]["id"])
 
-  // will error if shortURL doesn't exist OR the person accessing it is not the owner
   if (!urlDatabase[shortURL] || user !== urlDatabase[shortURL]["id"]) {
     res.sendStatus(400);
     return;
@@ -234,7 +234,7 @@ app.post("/register", (req, res) => {
     users[userID] = {
       id:       userID,
       email:    email,
-      password: password
+      password: bcrypt.hashSync(password, 10)
     };
 
     res.cookie("user_id", userID);
