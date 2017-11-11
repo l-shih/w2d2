@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-var cookieSession = require("cookie-session");
+const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const app = express();
 
@@ -57,14 +57,14 @@ function userRandomString() {
 
 }
 
-
-function findUsername(email) {
+// return is true or false
+function emailExist(email) {
   return Object.keys(users)
     .filter((key) => { return users[key]["email"] === email; }).length > 0;
 
 }
 
-
+// input is the email and password, if true, returns the user ID
 function validateUser(email, password) {
   return Object.keys(users)
     .find((key) => users[key]["email"] === email && bcrypt.compareSync(password, users[key]["password"]));
@@ -72,15 +72,12 @@ function validateUser(email, password) {
 
 
 function urlsForUser(user_id) {
-  var userSpecificData = [];
-
-  for(var t in urlDatabase){
-    if(urlDatabase[t].user_id === user_id){
-      userSpecificData.push(urlDatabase[t]);
+  return Object.keys(urlDatabase).reduce((previous, current) => {
+    if(urlDatabase[current].user_id === user_id) {
+      previous.push(urlDatabase[current]);
     }
-  }
-  return userSpecificData;
-
+    return previous;
+  }, []);
 }
 
 
@@ -138,7 +135,7 @@ app.post("/urls", (req, res) => {
 
   if (!longURL) {
     res.status(400);
-    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
+    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400], message: ""});
     return;
   } else {
     urlDatabase[shortURL] = {
@@ -159,7 +156,7 @@ app.get("/u/:shortURL", (req, res) => {
 
   if (!urlDatabase[shortURL]) {
     res.status(404);
-    res.render("urls_error", {statNum: 404, status: statusLookup, statInfo: statusLookup[404]});
+    res.render("urls_error", {statNum: 404, status: statusLookup, statInfo: statusLookup[404], message: ""});
     return;
   }
 
@@ -175,7 +172,7 @@ app.get("/urls/:id", (req, res) => {
 
   if (!urlDatabase[shortURL]["shortURL"] || user !== urlDatabase[shortURL]["user_id"]) {
     res.status(400);
-    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
+    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400], message: ""});
     return;
   }
 
@@ -189,7 +186,7 @@ app.post("/:id/update", (req, res) => {
 
   if (!urlDatabase[updateShortURL]) {
     res.status(404);
-    res.render("urls_error", {statNum: 404, status: statusLookup, statInfo: statusLookup[404]});
+    res.render("urls_error", {statNum: 404, status: statusLookup, statInfo: statusLookup[404], message: ""});
     return;
   }
 
@@ -205,7 +202,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
   if (!urlDatabase[deleteURL]["url"] || user !== urlDatabase[deleteURL]["user_id"]) {
     res.status(400);
-    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400]});
+    res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400], message: ""});
     return;
   }
 
@@ -254,7 +251,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const {email, password} = req.body;
-  const foundUser = findUsername(email);
+  const foundUser = emailExist(email);
 
   if (email.length === 0 || password.length === 0) {
     res.status(400);
