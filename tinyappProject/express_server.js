@@ -170,7 +170,7 @@ app.get("/urls/:id", (req, res) => {
   const user = req.session.user_id;
   const shortURL = req.params.id;
 
-  if (!urlDatabase[shortURL]["shortURL"] || user !== urlDatabase[shortURL]["user_id"]) {
+  if (!urlDatabase[shortURL] || !urlDatabase[shortURL]["shortURL"] || user !== urlDatabase[shortURL]["user_id"]) {
     res.status(400);
     res.render("urls_error", {statNum: 400, status: statusLookup, statInfo: statusLookup[400], message: ""});
     return;
